@@ -19,6 +19,28 @@ body{
   min-height:100vh;
 }
 
+/* NÚT QUAY LẠI */
+
+.back-btn{
+  position:fixed;
+  top:20px;
+  left:20px;
+  background:#111827;
+  color:#fff;
+  text-decoration:none;
+  padding:12px 18px;
+  border-radius:12px;
+  font-weight:600;
+  box-shadow:0 4px 10px rgba(0,0,0,0.15);
+  transition:.2s;
+  z-index:999;
+}
+
+.back-btn:hover{
+  background:#2563eb;
+  transform:translateY(-2px);
+}
+
 #app{
   max-width:900px;
   margin:auto;
@@ -245,16 +267,28 @@ body{
     width:100%;
   }
 
+  .back-btn{
+    top:12px;
+    left:12px;
+    padding:10px 14px;
+    font-size:14px;
+  }
+
 }
 </style>
 </head>
 
 <body>
 
+<!-- NÚT QUAY LẠI -->
+<a href="index.html" class="back-btn">
+  ← Quay lại
+</a>
+
 <div id="app">
 
   <div class="header">
-    <h1>🎓 Hệ Thống Thi Trắc Nghiệm</h1>
+    <h1>Hệ Thống Thi Trắc Nghiệm kiến trúc máy tính C1235689.html</h1>
     <p>Nhập tên file DOCX rồi nhấn bắt đầu</p>
   </div>
 
