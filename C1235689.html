@@ -3,96 +3,383 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Hệ Thống Thi Trắc Nghiệm</title>
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#f5f5f5;min-height:100vh}
-#app{max-width:860px;margin:auto;padding:1.5rem}
-.header{text-align:center;padding:1.5rem 0 2rem}
-.header h1{font-size:26px;font-weight:700;color:#1a1a1a;margin-bottom:6px}
-.header p{font-size:14px;color:#888}
-.upload-card{background:#fff;border:1px solid #e0e0e0;border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:14px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
-.upload-card input[type=file]{flex:1;min-width:0;font-size:14px}
-#runBtn{display:flex;align-items:center;gap:6px;padding:10px 22px;background:#2563eb;color:#fff;border:none;border-radius:10px;cursor:pointer;font-size:15px;font-weight:600;white-space:nowrap;transition:background .15s}
-#runBtn:hover{background:#1d4ed8}
-#runBtn:disabled{background:#93c5fd;cursor:not-allowed}
-#stats{display:flex;gap:12px;margin-bottom:1.5rem;flex-wrap:wrap}
-.stat{flex:1;min-width:90px;background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:.75rem 1rem;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
-.stat-n{font-size:24px;font-weight:700;color:#1a1a1a}
-.stat-l{font-size:12px;color:#888;margin-top:2px}
-.stat.s-correct .stat-n{color:#16a34a}
-.stat.s-wrong .stat-n{color:#dc2626}
-.stat.s-left .stat-n{color:#2563eb}
-.question{background:#fff;border:1px solid #e0e0e0;border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1.25rem;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
-.q-meta{display:flex;gap:8px;margin-bottom:.75rem;flex-wrap:wrap}
-.badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
-.badge-num{background:#f3f4f6;color:#374151}
-.badge-level{background:#dbeafe;color:#1d4ed8}
-.badge-topic{background:#f3f4f6;color:#6b7280}
-.q-title{font-size:15px;line-height:1.7;color:#1a1a1a;margin-bottom:1rem}
-.options{display:flex;flex-direction:column;gap:8px}
-.opt{border:1.5px solid #e0e0e0;border-radius:10px;padding:12px 14px;cursor:pointer;font-size:14px;color:#1a1a1a;transition:background .12s,border-color .12s;display:flex;align-items:flex-start;gap:10px;line-height:1.6}
-.opt:hover{background:#f0f4ff;border-color:#93c5fd}
-.opt.correct{background:#dcfce7;border-color:#16a34a;color:#15803d}
-.opt.wrong{background:#fee2e2;border-color:#dc2626;color:#b91c1c}
-.opt.disabled{pointer-events:none}
-.opt-letter{font-weight:700;min-width:18px}
-.answer-box{margin-top:1rem;background:#f8faff;border:1px solid #dbeafe;border-radius:10px;padding:14px;font-size:14px;line-height:1.7;display:none;color:#374151}
-.answer-box b{color:#1a1a1a}
-.empty{text-align:center;padding:3rem 1rem;color:#aaa;font-size:14px}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,sans-serif;
+  background:#f5f5f5;
+  min-height:100vh;
+}
+
+#app{
+  max-width:900px;
+  margin:auto;
+  padding:1.5rem;
+}
+
+.header{
+  text-align:center;
+  padding:1.5rem 0 2rem;
+}
+
+.header h1{
+  font-size:28px;
+  font-weight:700;
+  color:#111827;
+  margin-bottom:8px;
+}
+
+.header p{
+  color:#6b7280;
+  font-size:14px;
+}
+
+.control-box{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:16px;
+  padding:1.2rem;
+  display:flex;
+  gap:12px;
+  margin-bottom:1.5rem;
+  box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+
+#fileName{
+  flex:1;
+  padding:14px;
+  border:1px solid #d1d5db;
+  border-radius:12px;
+  font-size:15px;
+  outline:none;
+}
+
+#fileName:focus{
+  border-color:#2563eb;
+}
+
+#runBtn{
+  padding:14px 24px;
+  border:none;
+  border-radius:12px;
+  background:#2563eb;
+  color:#fff;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.15s;
+}
+
+#runBtn:hover{
+  background:#1d4ed8;
+}
+
+#runBtn:disabled{
+  background:#93c5fd;
+  cursor:not-allowed;
+}
+
+#stats{
+  display:none;
+  gap:12px;
+  margin-bottom:1.5rem;
+  flex-wrap:wrap;
+}
+
+.stat{
+  flex:1;
+  min-width:120px;
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  padding:1rem;
+  text-align:center;
+  box-shadow:0 1px 5px rgba(0,0,0,0.05);
+}
+
+.stat-number{
+  font-size:28px;
+  font-weight:700;
+}
+
+.stat-label{
+  font-size:13px;
+  color:#6b7280;
+  margin-top:4px;
+}
+
+.correct-color{
+  color:#16a34a;
+}
+
+.wrong-color{
+  color:#dc2626;
+}
+
+.left-color{
+  color:#2563eb;
+}
+
+.question{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:16px;
+  padding:1.4rem;
+  margin-bottom:1.4rem;
+  box-shadow:0 2px 8px rgba(0,0,0,0.05);
+}
+
+.q-top{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+}
+
+.badge{
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:600;
+}
+
+.badge-number{
+  background:#eff6ff;
+  color:#2563eb;
+}
+
+.badge-topic{
+  background:#f3f4f6;
+  color:#374151;
+}
+
+.q-title{
+  font-size:16px;
+  line-height:1.7;
+  color:#111827;
+  margin-bottom:1rem;
+}
+
+.options{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.option{
+  border:1.5px solid #d1d5db;
+  border-radius:12px;
+  padding:14px;
+  cursor:pointer;
+  display:flex;
+  gap:12px;
+  transition:.15s;
+  line-height:1.6;
+}
+
+.option:hover{
+  background:#f8fbff;
+  border-color:#93c5fd;
+}
+
+.option.correct{
+  background:#dcfce7;
+  border-color:#16a34a;
+  color:#166534;
+}
+
+.option.wrong{
+  background:#fee2e2;
+  border-color:#dc2626;
+  color:#991b1b;
+}
+
+.option.disabled{
+  pointer-events:none;
+}
+
+.option-letter{
+  font-weight:700;
+  min-width:20px;
+}
+
+.answer-box{
+  margin-top:1rem;
+  background:#f8fbff;
+  border:1px solid #bfdbfe;
+  border-radius:12px;
+  padding:14px;
+  line-height:1.7;
+  display:none;
+}
+
+.empty{
+  text-align:center;
+  padding:3rem 1rem;
+  color:#9ca3af;
+  font-size:15px;
+}
+
+.loading{
+  text-align:center;
+  padding:2rem;
+  color:#2563eb;
+  font-weight:600;
+}
+
+@media(max-width:700px){
+
+  .control-box{
+    flex-direction:column;
+  }
+
+  #runBtn{
+    width:100%;
+  }
+
+}
 </style>
 </head>
+
 <body>
+
 <div id="app">
+
   <div class="header">
     <h1>🎓 Hệ Thống Thi Trắc Nghiệm</h1>
-    <p>Tải file DOCX để bắt đầu luyện thi</p>
+    <p>Nhập tên file DOCX rồi nhấn bắt đầu</p>
   </div>
 
-  <div class="upload-card">
-    <input type="file" id="fileInput" accept=".docx">
-    <button id="runBtn">▶ Bắt đầu</button>
+  <div class="control-box">
+
+    <input
+      type="text"
+      id="fileName"
+      placeholder="Ví dụ: C1 hoặc C2"
+    >
+
+    <button id="runBtn">
+      ▶ Bắt đầu
+    </button>
+
   </div>
 
-  <div id="stats" style="display:none">
-    <div class="stat"><div class="stat-n" id="sTotal">0</div><div class="stat-l">Tổng câu</div></div>
-    <div class="stat s-correct"><div class="stat-n" id="sCorrect">0</div><div class="stat-l">Đúng</div></div>
-    <div class="stat s-wrong"><div class="stat-n" id="sWrong">0</div><div class="stat-l">Sai</div></div>
-    <div class="stat s-left"><div class="stat-n" id="sLeft">0</div><div class="stat-l">Chưa làm</div></div>
+  <div id="stats">
+
+    <div class="stat">
+      <div class="stat-number" id="sTotal">0</div>
+      <div class="stat-label">Tổng câu</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-number correct-color" id="sCorrect">0</div>
+      <div class="stat-label">Đúng</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-number wrong-color" id="sWrong">0</div>
+      <div class="stat-label">Sai</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-number left-color" id="sLeft">0</div>
+      <div class="stat-label">Chưa làm</div>
+    </div>
+
   </div>
 
   <div id="quiz">
-    <div class="empty">Chọn file DOCX rồi nhấn "Bắt đầu"</div>
+
+    <div class="empty">
+      Nhập tên file rồi nhấn "Bắt đầu"
+    </div>
+
   </div>
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
+
 <script>
+
 const $ = id => document.getElementById(id);
-let correct=0, wrong=0, total=0;
+
+let total = 0;
+let correct = 0;
+let wrong = 0;
 
 $('runBtn').onclick = async () => {
-  const file = $('fileInput').files[0];
-  if(!file){ alert('Vui lòng chọn file DOCX'); return; }
+
+  const name = $('fileName').value.trim();
+
+  if(!name){
+    alert('Vui lòng nhập tên file');
+    return;
+  }
+
+  const filePath = name + '.docx';
+
   $('runBtn').disabled = true;
   $('runBtn').textContent = 'Đang tải...';
-  try {
-    const buf = await file.arrayBuffer();
-    const res = await mammoth.extractRawText({arrayBuffer: buf});
-    parseAndRender(res.value);
-  } catch(e) {
-    alert('Không đọc được file DOCX: ' + e.message);
+
+  $('quiz').innerHTML = `
+    <div class="loading">
+      Đang đọc file ${filePath}...
+    </div>
+  `;
+
+  try{
+
+    const response = await fetch(filePath);
+
+    if(!response.ok){
+      throw new Error('Không tìm thấy file ' + filePath);
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+
+    const result = await mammoth.extractRawText({
+      arrayBuffer: arrayBuffer
+    });
+
+    parseAndRender(result.value);
+
+  }catch(e){
+
+    $('quiz').innerHTML = `
+      <div class="empty">
+        ${e.message}
+      </div>
+    `;
+
   }
+
   $('runBtn').disabled = false;
   $('runBtn').textContent = '▶ Bắt đầu';
 };
 
-function shuffle(a){
-  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
-  return a;
+function shuffle(arr){
+
+  for(let i = arr.length - 1; i > 0; i--){
+
+    const j = Math.floor(Math.random() * (i + 1));
+
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+
+  return arr;
 }
 
 function updateStats(){
+
   $('sTotal').textContent = total;
   $('sCorrect').textContent = correct;
   $('sWrong').textContent = wrong;
@@ -100,133 +387,241 @@ function updateStats(){
 }
 
 function parseAndRender(text){
+
   const quiz = $('quiz');
+
   quiz.innerHTML = '';
-  correct=0; wrong=0; total=0;
+
+  total = 0;
+  correct = 0;
+  wrong = 0;
+
   $('stats').style.display = 'flex';
 
-  const blocks = text.split(/(?=Câu\s+\d+)/g).map(b=>b.trim()).filter(b=>b && /^Câu\s+\d+/i.test(b));
+  const blocks = text
+    .split(/(?=Câu\s+\d+)/g)
+    .map(x => x.trim())
+    .filter(x => /^Câu\s+\d+/i.test(x));
 
   if(!blocks.length){
-    quiz.innerHTML = '<div class="empty">Không tìm thấy câu hỏi nào. Kiểm tra định dạng file.</div>';
+
+    quiz.innerHTML = `
+      <div class="empty">
+        Không tìm thấy câu hỏi trong file DOCX
+      </div>
+    `;
+
     return;
   }
 
-  let rendered = 0;
+  let questionIndex = 0;
 
   blocks.forEach(block => {
-    const lines = block.split('\n').map(l=>l.trim()).filter(l=>l);
+
+    const lines = block
+      .split('\n')
+      .map(x => x.trim())
+      .filter(x => x);
 
     let questionLines = [];
     let options = [];
-    let correctLetter = '';
-    let explainLines = [];
+    let answer = '';
+    let explain = [];
+
     let inExplain = false;
 
     lines.forEach(line => {
-      // Strip bullets: ·, •, -, *
-      const clean = line.replace(/^[·•\-\*]\s+/, '').trim();
+
+      const clean = line.replace(/^[•·\-\*]\s*/, '').trim();
 
       if(/^[A-D]\.\s+/.test(clean)){
-        options.push({ letter: clean[0], text: clean.substring(2).trim() });
+
+        options.push({
+          letter: clean[0],
+          text: clean.substring(2).trim()
+        });
+
         inExplain = false;
+
         return;
       }
-      if(/^Đáp án đúng\s*:/i.test(line)){
-        const m = line.match(/:\s*([A-D])/i);
-        if(m) correctLetter = m[1].toUpperCase();
+
+      if(/^Đáp án đúng/i.test(clean)){
+
+        const match = clean.match(/([A-D])/i);
+
+        if(match){
+          answer = match[1].toUpperCase();
+        }
+
         inExplain = false;
+
         return;
       }
-      if(/^Giải thích/i.test(line)){
-        const after = line.replace(/^Giải thích(\s*chi tiết)?\s*:/i,'').trim();
-        explainLines = after ? [after] : [];
+
+      if(/^Giải thích/i.test(clean)){
+
         inExplain = true;
+
+        const after = clean
+          .replace(/^Giải thích(\s*chi tiết)?\s*:/i,'')
+          .trim();
+
+        if(after){
+          explain.push(after);
+        }
+
         return;
       }
-      if(inExplain){ explainLines.push(clean); return; }
-      questionLines.push(clean);
+
+      if(inExplain){
+
+        explain.push(clean);
+
+      }else{
+
+        questionLines.push(clean);
+      }
+
     });
 
-    if(options.length < 2 || !correctLetter) return;
-
-    const correctOption = options.find(o=>o.letter===correctLetter);
-    if(!correctOption) return;
+    if(options.length < 2 || !answer){
+      return;
+    }
 
     total++;
+    questionIndex++;
 
-    // Extract meta from first line
-    const firstLine = questionLines[0] || '';
-    const levelMatch = firstLine.match(/\[([^\]]+)\]/);
-    const metaLevel = levelMatch ? levelMatch[1] : '';
-    const dashMatch = firstLine.match(/\]\s*-\s*(.+)/);
-    const metaTopic = dashMatch ? dashMatch[1].trim() : '';
+    const correctOption = options.find(o => o.letter === answer);
 
-    const explain = explainLines.join(' ');
+    if(!correctOption){
+      return;
+    }
 
-    // Shuffle options
     const shuffled = shuffle([...options]);
-    const letters = ['A','B','C','D'];
-    shuffled.forEach((o,i) => o.newLetter = letters[i]);
-    const newCorrect = shuffled.find(o=>o.text===correctOption.text).newLetter;
 
-    rendered++;
+    const letters = ['A','B','C','D'];
+
+    shuffled.forEach((o, i) => {
+      o.newLetter = letters[i];
+    });
+
+    const newCorrect = shuffled.find(
+      o => o.text === correctOption.text
+    ).newLetter;
 
     const div = document.createElement('div');
+
     div.className = 'question';
 
-    const metaHTML = `<div class="q-meta">
-      <span class="badge badge-num">Câu ${rendered}</span>
-      ${metaLevel ? `<span class="badge badge-level">${metaLevel}</span>` : ''}
-      ${metaTopic ? `<span class="badge badge-topic">${metaTopic}</span>` : ''}
-    </div>`;
+    div.innerHTML = `
 
-    const optsHTML = shuffled.map(o=>`
-      <div class="opt" data-letter="${o.newLetter}">
-        <span class="opt-letter">${o.newLetter}.</span>
-        <span>${o.text}</span>
-      </div>`).join('');
+      <div class="q-top">
 
-    div.innerHTML = `${metaHTML}
-      <div class="q-title">${questionLines.join('<br>')}</div>
-      <div class="options">${optsHTML}</div>
+        <div class="badge badge-number">
+          Câu ${questionIndex}
+        </div>
+
+      </div>
+
+      <div class="q-title">
+        ${questionLines.join('<br>')}
+      </div>
+
+      <div class="options">
+
+        ${shuffled.map(o => `
+
+          <div class="option" data-letter="${o.newLetter}">
+
+            <div class="option-letter">
+              ${o.newLetter}.
+            </div>
+
+            <div>
+              ${o.text}
+            </div>
+
+          </div>
+
+        `).join('')}
+
+      </div>
+
       <div class="answer-box">
-        <b>Đáp án đúng: ${newCorrect}</b><br><br>
-        ${explain ? explain : '<em>Không có giải thích.</em>'}
-      </div>`;
+
+        <b>Đáp án đúng: ${newCorrect}</b>
+
+        <br><br>
+
+        ${explain.length
+          ? explain.join(' ')
+          : '<em>Không có giải thích</em>'
+        }
+
+      </div>
+
+    `;
 
     quiz.appendChild(div);
 
-    const opts = div.querySelectorAll('.opt');
-    const ansBox = div.querySelector('.answer-box');
+    const optionEls = div.querySelectorAll('.option');
+
+    const answerBox = div.querySelector('.answer-box');
+
     let answered = false;
 
-    opts.forEach(el => {
-      el.addEventListener('click', () => {
+    optionEls.forEach(el => {
+
+      el.onclick = () => {
+
         if(answered) return;
+
         answered = true;
-        opts.forEach(op => {
+
+        optionEls.forEach(op => {
+
           op.classList.add('disabled');
-          if(op.dataset.letter === newCorrect) op.classList.add('correct');
+
+          if(op.dataset.letter === newCorrect){
+            op.classList.add('correct');
+          }
+
         });
+
         if(el.dataset.letter !== newCorrect){
+
           el.classList.add('wrong');
+
           wrong++;
-        } else {
+
+        }else{
+
           correct++;
         }
-        ansBox.style.display = 'block';
+
+        answerBox.style.display = 'block';
+
         updateStats();
-      });
+      };
+
     });
+
   });
 
   updateStats();
 
-  if(!rendered){
-    quiz.innerHTML = '<div class="empty">Không tìm thấy câu hỏi hợp lệ. Kiểm tra định dạng file.</div>';
+  if(questionIndex === 0){
+
+    quiz.innerHTML = `
+      <div class="empty">
+        Không tìm thấy câu hỏi hợp lệ
+      </div>
+    `;
   }
+
 }
 </script>
+
 </body>
 </html>
