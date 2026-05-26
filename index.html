@@ -1,428 +1,97 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Responsive Button Navigation</title>
 
-<title>Thi Trắc Nghiệm DOCX</title>
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
 
-<style>
+    body{
+      font-family:"Segoe UI", sans-serif;
+      background:#0f172a;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:100vh;
+      padding:20px;
+    }
 
-body{
-    font-family: Arial, sans-serif;
-    background:#f5f5f5;
-    padding:20px;
-}
+    /* Container chứa các nút */
+    .button-group{
+      display:flex;
+      gap:20px;
+      flex-wrap:wrap;
+      justify-content:center;
+      width:100%;
+      max-width:900px;
+    }
 
-.container{
-    max-width:1000px;
-    margin:auto;
-}
+    /* Style nút */
+    .nav-btn{
+      flex:1;
+      min-width:200px;
+      padding:18px 25px;
+      border:none;
+      border-radius:14px;
+      font-size:18px;
+      font-weight:600;
+      cursor:pointer;
+      transition:0.3s;
+      color:white;
+      background:linear-gradient(135deg,#2563eb,#7c3aed);
+      box-shadow:0 8px 20px rgba(0,0,0,0.3);
+    }
 
-h1{
-    text-align:center;
-    margin-bottom:20px;
-}
+    .nav-btn:hover{
+      transform:translateY(-4px) scale(1.03);
+      box-shadow:0 12px 25px rgba(0,0,0,0.4);
+    }
 
-.upload-box{
-    background:white;
-    padding:20px;
-    border-radius:12px;
-    margin-bottom:25px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.1);
-}
+    /* Laptop/Desktop -> nằm ngang */
+    @media (min-width: 768px){
+      .button-group{
+        flex-direction:row;
+      }
+    }
 
-input{
-    margin-bottom:15px;
-}
+    /* Điện thoại -> nằm dọc */
+    @media (max-width: 767px){
+      .button-group{
+        flex-direction:column;
+      }
 
-button{
-    background:#007bff;
-    color:white;
-    border:none;
-    padding:12px 25px;
-    border-radius:10px;
-    cursor:pointer;
-    font-size:16px;
-}
-
-button:hover{
-    background:#0056b3;
-}
-
-.question{
-    background:white;
-    padding:20px;
-    border-radius:12px;
-    margin-bottom:20px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.1);
-}
-
-.title{
-    font-size:19px;
-    font-weight:bold;
-    line-height:1.6;
-    margin-bottom:20px;
-}
-
-.option{
-    border:2px solid #ddd;
-    padding:14px;
-    border-radius:10px;
-    margin:10px 0;
-    cursor:pointer;
-    transition:0.2s;
-}
-
-.option:hover{
-    background:#f0f0f0;
-}
-
-.correct{
-    background:#d4edda;
-    border-color:green;
-    color:green;
-}
-
-.wrong{
-    background:#f8d7da;
-    border-color:red;
-    color:red;
-}
-
-.answer-box{
-    margin-top:20px;
-    background:#eef5ff;
-    padding:15px;
-    border-radius:10px;
-    display:none;
-    line-height:1.6;
-}
-
-</style>
+      .nav-btn{
+        width:100%;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<div class="container">
-
-    <h1>Hệ Thống Thi Trắc Nghiệm</h1>
-
-    <div class="upload-box">
-
-        <input
-            type="file"
-            id="fileInput"
-            accept=".docx"
-        >
-
-        <br>
-
-        <button id="runBtn">
-            RUN
-        </button>
-
-    </div>
-
-    <div id="quiz"></div>
-
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
-
-<script>
-
-const input =
-    document.getElementById("fileInput");
-
-const runBtn =
-    document.getElementById("runBtn");
-
-const quiz =
-    document.getElementById("quiz");
-
-runBtn.addEventListener(
-    "click",
-    runQuiz
-);
-
-async function runQuiz(){
-
-    const file = input.files[0];
-
-    if(!file){
-
-        alert("Vui lòng chọn file DOCX");
-
-        return;
-    }
-
-    try{
-
-        const arrayBuffer =
-            await file.arrayBuffer();
-
-        const result =
-            await mammoth.extractRawText({
-                arrayBuffer
-            });
-
-        const text =
-            result.value;
-
-        console.log(text);
-
-        generateQuiz(text);
-
-    }catch(err){
-
-        console.error(err);
-
-        alert(
-            "Không đọc được file DOCX"
-        );
-    }
-
-}
-
-function shuffle(arr){
-
-    for(
-        let i = arr.length - 1;
-        i > 0;
-        i--
-    ){
-
-        const j =
-            Math.floor(
-                Math.random() * (i + 1)
-            );
-
-        [arr[i], arr[j]]
-            =
-        [arr[j], arr[i]];
-    }
-
-    return arr;
-}
-
-function generateQuiz(text){
-
-    quiz.innerHTML = "";
-
-    const blocks =
-        text.split(/(?=Câu\s+\d+)/g);
-
-    blocks.forEach(block=>{
-
-        block = block.trim();
-
-        if(!block) return;
-
-        const lines =
-            block
-            .split("\n")
-            .map(x=>x.trim())
-            .filter(x=>x);
-
-        let questionLines = [];
-
-        let options = [];
-
-        let correct = "";
-
-        let explain = "";
-
-        lines.forEach(line=>{
-
-            // đáp án
-            if(/^[A-D]\./.test(line)){
-
-                options.push({
-
-                    original: line[0],
-
-                    text:
-                        line.substring(2)
-                        .trim()
-                });
-
-            }
-
-            // đáp án đúng
-            else if(
-                line.startsWith(
-                    "Đáp án đúng"
-                )
-            ){
-
-                correct =
-                    line.split(":")[1]
-                    .trim();
-            }
-
-            // giải thích
-            else if(
-                line.startsWith(
-                    "Giải thích"
-                )
-            ){
-
-                explain =
-                    line.replace(
-                        "Giải thích:",
-                        ""
-                    ).trim();
-            }
-
-            // câu hỏi
-            else{
-
-                questionLines.push(line);
-            }
-
-        });
-
-        if(options.length !== 4) return;
-
-        const title =
-            questionLines.join("<br>");
-
-        const correctOption =
-            options.find(
-                o=>o.original===correct
-            );
-
-        if(!correctOption) return;
-
-        // ĐẢO ĐÁP ÁN
-        shuffle(options);
-
-        const letters =
-            ["A","B","C","D"];
-
-        options.forEach((o,i)=>{
-
-            o.newLetter =
-                letters[i];
-        });
-
-        // đáp án đúng mới
-        const newCorrect =
-            options.find(
-                o=>
-                o.text===
-                correctOption.text
-            ).newLetter;
-
-        const div =
-            document.createElement("div");
-
-        div.className =
-            "question";
-
-        let html =
-            `
-            <div class="title">
-                ${title}
-            </div>
-            `;
-
-        options.forEach(op=>{
-
-            html += `
-            <div
-                class="option"
-                data-answer="${op.newLetter}"
-            >
-
-                <b>
-                    ${op.newLetter}.
-                </b>
-
-                ${op.text}
-
-            </div>
-            `;
-        });
-
-        html += `
-        <div class="answer-box">
-
-            <b>
-                Đáp án đúng:
-            </b>
-
-            ${newCorrect}
-
-            <br><br>
-
-            <b>
-                Giải thích:
-            </b>
-
-            ${explain}
-
-        </div>
-        `;
-
-        div.innerHTML = html;
-
-        quiz.appendChild(div);
-
-        const optionEls =
-            div.querySelectorAll(
-                ".option"
-            );
-
-        const answerBox =
-            div.querySelector(
-                ".answer-box"
-            );
-
-        optionEls.forEach(el=>{
-
-            el.addEventListener(
-                "click",
-                ()=>{
-
-                optionEls.forEach(op=>{
-
-                    if(
-                        op.dataset.answer
-                        === newCorrect
-                    ){
-
-                        op.classList.add(
-                            "correct"
-                        );
-                    }
-
-                    op.style.pointerEvents =
-                        "none";
-                });
-
-                if(
-                    el.dataset.answer
-                    !== newCorrect
-                ){
-
-                    el.classList.add(
-                        "wrong"
-                    );
-                }
-
-                answerBox.style.display =
-                    "block";
-
-            });
-
-        });
-
-    });
-
-}
-
-</script>
+  <div class="button-group">
+
+    <button class="nav-btn"
+      onclick="window.location.href='C1235689.html'">
+      Đi tới C1235689
+    </button>
+
+    <button class="nav-btn"
+      onclick="window.location.href='C4.html'">
+      Đi tới C4
+    </button>
+
+    <button class="nav-btn"
+      onclick="window.location.href='C7.html'">
+      Đi tới C7
+    </button>
+
+  </div>
 
 </body>
 </html>
